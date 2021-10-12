@@ -1212,9 +1212,8 @@ var require_http_json_body_parser = __commonJS({
   }
 });
 
-// src/functions/hello/handler.ts
+// src/functions/user/handler.ts
 __export(exports, {
-  hello: () => hello,
   main: () => main
 });
 
@@ -1233,16 +1232,20 @@ var middyfy = (handler) => {
   return (0, import_core.default)(handler).use((0, import_http_json_body_parser.default)());
 };
 
-// src/functions/hello/handler.ts
-var hello = async (event) => {
+// src/controller/hello/hello.controller.ts
+var concat = (firstName, lastName) => {
+  return firstName + " " + lastName;
+};
+
+// src/functions/user/handler.ts
+var user = async (event) => {
   return formatJSONResponse({
-    name: event.body.name
+    message: concat(event.body.firstName, event.body.lastName)
   });
 };
-var main = middyfy(hello);
+var main = middyfy(user);
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
-  hello,
   main
 });
 /*!
