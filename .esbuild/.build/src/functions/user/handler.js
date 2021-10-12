@@ -1,9 +1,26 @@
 var __create = Object.create;
 var __defProp = Object.defineProperty;
+var __defProps = Object.defineProperties;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropDescs = Object.getOwnPropertyDescriptors;
 var __getOwnPropNames = Object.getOwnPropertyNames;
+var __getOwnPropSymbols = Object.getOwnPropertySymbols;
 var __getProtoOf = Object.getPrototypeOf;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __propIsEnum = Object.prototype.propertyIsEnumerable;
+var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues = (a, b) => {
+  for (var prop in b || (b = {}))
+    if (__hasOwnProp.call(b, prop))
+      __defNormalProp(a, prop, b[prop]);
+  if (__getOwnPropSymbols)
+    for (var prop of __getOwnPropSymbols(b)) {
+      if (__propIsEnum.call(b, prop))
+        __defNormalProp(a, prop, b[prop]);
+    }
+  return a;
+};
+var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
 var __markAsModule = (target) => __defProp(target, "__esModule", { value: true });
 var __commonJS = (cb, mod) => function __require() {
   return mod || (0, cb[Object.keys(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
@@ -270,6 +287,337 @@ var require_core = __commonJS({
       return instance;
     };
     module2.exports = middy2;
+  }
+});
+
+// node_modules/@middy/util/codes.json
+var require_codes = __commonJS({
+  "node_modules/@middy/util/codes.json"(exports2, module2) {
+    module2.exports = {
+      "100": "Continue",
+      "101": "Switching Protocols",
+      "102": "Processing",
+      "103": "Early Hints",
+      "200": "OK",
+      "201": "Created",
+      "202": "Accepted",
+      "203": "Non-Authoritative Information",
+      "204": "No Content",
+      "205": "Reset Content",
+      "206": "Partial Content",
+      "207": "Multi-Status",
+      "208": "Already Reported",
+      "226": "IM Used",
+      "300": "Multiple Choices",
+      "301": "Moved Permanently",
+      "302": "Found",
+      "303": "See Other",
+      "304": "Not Modified",
+      "305": "Use Proxy",
+      "306": "(Unused)",
+      "307": "Temporary Redirect",
+      "308": "Permanent Redirect",
+      "400": "Bad Request",
+      "401": "Unauthorized",
+      "402": "Payment Required",
+      "403": "Forbidden",
+      "404": "Not Found",
+      "405": "Method Not Allowed",
+      "406": "Not Acceptable",
+      "407": "Proxy Authentication Required",
+      "408": "Request Timeout",
+      "409": "Conflict",
+      "410": "Gone",
+      "411": "Length Required",
+      "412": "Precondition Failed",
+      "413": "Payload Too Large",
+      "414": "URI Too Long",
+      "415": "Unsupported Media Type",
+      "416": "Range Not Satisfiable",
+      "417": "Expectation Failed",
+      "418": "I'm a teapot",
+      "421": "Misdirected Request",
+      "422": "Unprocessable Entity",
+      "423": "Locked",
+      "424": "Failed Dependency",
+      "425": "Unordered Collection",
+      "426": "Upgrade Required",
+      "428": "Precondition Required",
+      "429": "Too Many Requests",
+      "431": "Request Header Fields Too Large",
+      "451": "Unavailable For Legal Reasons",
+      "500": "Internal Server Error",
+      "501": "Not Implemented",
+      "502": "Bad Gateway",
+      "503": "Service Unavailable",
+      "504": "Gateway Timeout",
+      "505": "HTTP Version Not Supported",
+      "506": "Variant Also Negotiates",
+      "507": "Insufficient Storage",
+      "508": "Loop Detected",
+      "509": "Bandwidth Limit Exceeded",
+      "510": "Not Extended",
+      "511": "Network Authentication Required"
+    };
+  }
+});
+
+// node_modules/@middy/util/index.js
+var require_util = __commonJS({
+  "node_modules/@middy/util/index.js"(exports2, module2) {
+    "use strict";
+    var {
+      Agent
+    } = require("https");
+    var awsClientDefaultOptions = {
+      httpOptions: {
+        agent: new Agent({
+          secureProtocol: "TLSv1_2_method"
+        })
+      }
+    };
+    var createPrefetchClient = (options) => {
+      const awsClientOptions = __spreadValues(__spreadValues({}, awsClientDefaultOptions), options.awsClientOptions);
+      const client = new options.AwsClient(awsClientOptions);
+      if (options.awsClientCapture) {
+        return options.awsClientCapture(client);
+      }
+      return client;
+    };
+    var createClient = async (options, request) => {
+      let awsClientCredentials = {};
+      if (options.awsClientAssumeRole) {
+        if (!request)
+          throw new Error("Request required when assuming role");
+        awsClientCredentials = await getInternal({
+          credentials: options.awsClientAssumeRole
+        }, request);
+      }
+      awsClientCredentials = __spreadValues(__spreadValues({}, awsClientCredentials), options.awsClientOptions);
+      return createPrefetchClient(__spreadProps(__spreadValues({}, options), {
+        awsClientOptions: awsClientCredentials
+      }));
+    };
+    var canPrefetch = (options) => {
+      return !(options !== null && options !== void 0 && options.awsClientAssumeRole) && !(options !== null && options !== void 0 && options.disablePrefetch);
+    };
+    var getInternal = async (variables, request) => {
+      if (!variables || !request)
+        return {};
+      let keys = [];
+      let values = [];
+      if (variables === true) {
+        keys = values = Object.keys(request.internal);
+      } else if (typeof variables === "string") {
+        keys = values = [variables];
+      } else if (Array.isArray(variables)) {
+        keys = values = variables;
+      } else if (typeof variables === "object") {
+        keys = Object.keys(variables);
+        values = Object.values(variables);
+      }
+      const promises = [];
+      for (const internalKey of values) {
+        var _valuePromise;
+        const pathOptionKey = internalKey.split(".");
+        const rootOptionKey = pathOptionKey.shift();
+        let valuePromise = request.internal[rootOptionKey];
+        if (typeof ((_valuePromise = valuePromise) === null || _valuePromise === void 0 ? void 0 : _valuePromise.then) !== "function") {
+          valuePromise = Promise.resolve(valuePromise);
+        }
+        promises.push(valuePromise.then((value) => pathOptionKey.reduce((p, c) => p === null || p === void 0 ? void 0 : p[c], value)));
+      }
+      values = await Promise.allSettled(promises);
+      const errors = values.filter((res) => res.status === "rejected").map((res) => res.reason.message);
+      if (errors.length)
+        throw new Error(JSON.stringify(errors));
+      return keys.reduce((obj, key, index) => __spreadProps(__spreadValues({}, obj), {
+        [sanitizeKey(key)]: values[index].value
+      }), {});
+    };
+    var sanitizeKeyPrefixLeadingNumber = /^([0-9])/;
+    var sanitizeKeyRemoveDisallowedChar = /[^a-zA-Z0-9]+/g;
+    var sanitizeKey = (key) => {
+      return key.replace(sanitizeKeyPrefixLeadingNumber, "_$1").replace(sanitizeKeyRemoveDisallowedChar, "_");
+    };
+    var cache = {};
+    var processCache = (options, fetch = () => void 0, request) => {
+      const {
+        cacheExpiry,
+        cacheKey
+      } = options;
+      if (cacheExpiry) {
+        const cached = getCache(cacheKey);
+        const unexpired = cached && (cacheExpiry < 0 || cached.expiry > Date.now());
+        if (unexpired && cached.modified) {
+          const value2 = fetch(request, cached.value);
+          cache[cacheKey] = {
+            value: __spreadValues(__spreadValues({}, cached.value), value2),
+            expiry: cached.expiry
+          };
+          return cache[cacheKey];
+        }
+        if (unexpired) {
+          return __spreadProps(__spreadValues({}, cached), {
+            cache: true
+          });
+        }
+      }
+      const value = fetch(request);
+      const expiry = Date.now() + cacheExpiry;
+      if (cacheExpiry) {
+        cache[cacheKey] = {
+          value,
+          expiry
+        };
+      }
+      return {
+        value,
+        expiry
+      };
+    };
+    var getCache = (key) => {
+      return cache[key];
+    };
+    var modifyCache = (cacheKey, value) => {
+      if (!cache[cacheKey])
+        return;
+      cache[cacheKey] = __spreadProps(__spreadValues({}, cache[cacheKey]), {
+        value,
+        modified: true
+      });
+    };
+    var clearCache = (keys = null) => {
+      var _keys;
+      keys = (_keys = keys) !== null && _keys !== void 0 ? _keys : Object.keys(cache);
+      if (!Array.isArray(keys))
+        keys = [keys];
+      for (const cacheKey of keys) {
+        cache[cacheKey] = void 0;
+      }
+    };
+    var jsonSafeParse = (string, reviver) => {
+      if (typeof string !== "string")
+        return string;
+      const firstChar = string[0];
+      if (firstChar !== "{" && firstChar !== "[" && firstChar !== '"')
+        return string;
+      try {
+        return JSON.parse(string, reviver);
+      } catch (e) {
+      }
+      return string;
+    };
+    var normalizeHttpResponse = (response) => {
+      var _response$headers, _response;
+      if (response === void 0) {
+        response = {};
+      } else if (Array.isArray(response) || typeof response !== "object" || response === null) {
+        response = {
+          body: response
+        };
+      }
+      response.headers = (_response$headers = (_response = response) === null || _response === void 0 ? void 0 : _response.headers) !== null && _response$headers !== void 0 ? _response$headers : {};
+      return response;
+    };
+    var statuses = require_codes();
+    var {
+      inherits
+    } = require("util");
+    var createErrorRegexp = /[^a-zA-Z]/g;
+    var createError = (code, message2, properties = {}) => {
+      const name = statuses[code].replace(createErrorRegexp, "");
+      const className = name.substr(-5) !== "Error" ? name + "Error" : name;
+      function HttpError(message3) {
+        const msg = message3 !== null && message3 !== void 0 ? message3 : statuses[code];
+        const err = new Error(msg);
+        Error.captureStackTrace(err, HttpError);
+        Object.setPrototypeOf(err, HttpError.prototype);
+        Object.defineProperty(err, "message", {
+          enumerable: true,
+          configurable: true,
+          value: msg,
+          writable: true
+        });
+        Object.defineProperty(err, "name", {
+          enumerable: false,
+          configurable: true,
+          value: className,
+          writable: true
+        });
+        return err;
+      }
+      inherits(HttpError, Error);
+      const desc = Object.getOwnPropertyDescriptor(HttpError, "name");
+      desc.value = className;
+      Object.defineProperty(HttpError, "name", desc);
+      Object.assign(HttpError.prototype, {
+        status: code,
+        statusCode: code,
+        expose: code < 500
+      }, properties);
+      return new HttpError(message2);
+    };
+    module2.exports = {
+      createPrefetchClient,
+      createClient,
+      canPrefetch,
+      getInternal,
+      sanitizeKey,
+      processCache,
+      getCache,
+      modifyCache,
+      clearCache,
+      jsonSafeParse,
+      normalizeHttpResponse,
+      createError
+    };
+  }
+});
+
+// node_modules/@middy/http-error-handler/index.js
+var require_http_error_handler = __commonJS({
+  "node_modules/@middy/http-error-handler/index.js"(exports2, module2) {
+    "use strict";
+    var {
+      jsonSafeParse,
+      normalizeHttpResponse
+    } = require_util();
+    var defaults = {
+      logger: console.error,
+      fallbackMessage: null
+    };
+    var httpErrorHandlerMiddleware = (opts = {}) => {
+      const options = __spreadValues(__spreadValues({}, defaults), opts);
+      const httpErrorHandlerMiddlewareOnError = async (request) => {
+        var _request$error, _request$error2, _request$error3, _request$error4, _request$error5;
+        if (typeof options.logger === "function") {
+          options.logger(request.error);
+        }
+        if ((_request$error = request.error) !== null && _request$error !== void 0 && _request$error.statusCode && ((_request$error2 = request.error) === null || _request$error2 === void 0 ? void 0 : _request$error2.expose) === void 0) {
+          request.error.expose = request.error.statusCode < 500;
+        }
+        if (options.fallbackMessage && (!((_request$error3 = request.error) !== null && _request$error3 !== void 0 && _request$error3.statusCode) || !((_request$error4 = request.error) !== null && _request$error4 !== void 0 && _request$error4.expose))) {
+          request.error = {
+            statusCode: 500,
+            message: options.fallbackMessage,
+            expose: true
+          };
+        }
+        if ((_request$error5 = request.error) !== null && _request$error5 !== void 0 && _request$error5.expose) {
+          var _request$error6, _request$error7;
+          request.response = normalizeHttpResponse(request.response);
+          request.response.statusCode = (_request$error6 = request.error) === null || _request$error6 === void 0 ? void 0 : _request$error6.statusCode;
+          request.response.body = (_request$error7 = request.error) === null || _request$error7 === void 0 ? void 0 : _request$error7.message;
+          request.response.headers["Content-Type"] = typeof jsonSafeParse(request.response.body) === "string" ? "text/plain" : "application/json";
+          return request.response;
+        }
+      };
+      return {
+        onError: httpErrorHandlerMiddlewareOnError
+      };
+    };
+    module2.exports = httpErrorHandlerMiddleware;
   }
 });
 
@@ -720,7 +1068,7 @@ var require_setprototypeof = __commonJS({
 });
 
 // node_modules/statuses/codes.json
-var require_codes = __commonJS({
+var require_codes2 = __commonJS({
   "node_modules/statuses/codes.json"(exports2, module2) {
     module2.exports = {
       "100": "Continue",
@@ -795,7 +1143,7 @@ var require_codes = __commonJS({
 var require_statuses = __commonJS({
   "node_modules/statuses/index.js"(exports2, module2) {
     "use strict";
-    var codes = require_codes();
+    var codes = require_codes2();
     module2.exports = status;
     status.STATUS_CODES = codes;
     status.codes = populateStatusesMap(status, codes);
@@ -1227,9 +1575,10 @@ var formatJSONResponse = (response) => {
 
 // src/libs/lambda.ts
 var import_core = __toModule(require_core());
+var import_http_error_handler = __toModule(require_http_error_handler());
 var import_http_json_body_parser = __toModule(require_http_json_body_parser());
 var middyfy = (handler) => {
-  return (0, import_core.default)(handler).use((0, import_http_json_body_parser.default)());
+  return (0, import_core.default)(handler).use((0, import_http_json_body_parser.default)()).use((0, import_http_error_handler.default)());
 };
 
 // src/controller/hello/hello.controller.ts

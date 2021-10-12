@@ -7,6 +7,7 @@ import schema from './schema';
 const user: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (
 	event
 ) => {
+
 	return formatJSONResponse({
 		message: concat(event.body.firstName, event.body.lastName),
 	});
